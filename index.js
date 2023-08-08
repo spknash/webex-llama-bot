@@ -283,10 +283,29 @@ framework.hears(
   /.*/,
   (bot, trigger) => {
     // This will fire for any input so only respond if we haven't already
-    console.log(`catch-all handler fired for user input: ${trigger.text}`);
+    console.log(`catch-all handler fired for user input, goes to llama: ${trigger.text}`);
+    const url = "http://d179-34-126-177-243.ngrok.io/generate";
+    const payload = { prompt: trigger.text };
+    var res;
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.response);
+        res = data.response;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     bot
-      .say(`Sorry, I don't know how to respond to "${trigger.text}"`)
-      .then(() => bot.say("markdown", framework.showHelp()))
+      .say(`Sorry, I don't know how to respond to "${trigger.text}" but llama might`)
+      .then(() => bot.say("markdown", res))
       //    .then(() => sendHelp(bot))
       .catch((e) =>
         console.error(`Problem in the unexepected command hander: ${e.message}`)
