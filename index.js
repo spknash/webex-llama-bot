@@ -284,8 +284,9 @@ framework.hears(
   (bot, trigger) => {
     // This will fire for any input so only respond if we haven't already
     console.log(`catch-all handler fired for user input, goes to llama: ${trigger.text}`);
-    const url = "http://d179-34-126-177-243.ngrok.io/generate";
-    const payload = { prompt: trigger.text };
+    const url = "http://65c2-34-32-242-51.ngrok-free.app/generate";
+    console.log(trigger.text);
+    const payload = { prompt: `${trigger.text}` };
     var res;
 
     fetch(url, {
