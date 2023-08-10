@@ -284,33 +284,29 @@ framework.hears(
   (bot, trigger) => {
     // This will fire for any input so only respond if we haven't already
     console.log(`catch-all handler fired for user input, goes to llama: ${trigger.text}`);
-    const url = "http://65c2-34-32-242-51.ngrok-free.app/generate";
-    console.log(trigger.text);
-    const payload = { prompt: `${trigger.text}` };
+    const url = "http://1343-35-240-238-206.ngrok-free.app/generate";
+    const  the_prompt = trigger.text;
+    const payload = { prompt: the_prompt };
     var res;
+    console.log(the_prompt);
+    const { exec } = require('child_process');
 
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data.response);
-        res = data.response;
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    bot
-      .say(`Sorry, I don't know how to respond to "${trigger.text}" but llama might`)
-      .then(() => bot.say("markdown", res))
-      //    .then(() => sendHelp(bot))
-      .catch((e) =>
-        console.error(`Problem in the unexepected command hander: ${e.message}`)
-      );
+    const prompt = trigger.text;
+    const scriptPath = './make_post.py'; // Make sure to provide the correct path to the script
+    
+    exec(`python ${scriptPath} "${prompt}"`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`An error occurred: ${error}`);
+        return;
+      }
+      const res = stdout.trim();
+      console.log(`Response from Python: ${res.response}`);
+    
+      bot.say(`Sorry, I don't know how to respond to "${trigger.text}" but llama might`)
+        .then(() => bot.say("markdown", res))
+        // .then(() => sendHelp(bot))
+        .catch((e) => console.error(`Problem in the unexepected command hander: ${e.message}`));
+    });
   },
   99999
 );
